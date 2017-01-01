@@ -1,0 +1,207 @@
+<?php
+require("dbclass.php");
+
+$table = 'ae_gallery';
+// use the same name as SQL table
+
+$password = 'aaaaaa';
+
+
+$db = new dbClass($db_host, $db_user, $db_pwd, $db_name);
+
+// This function makes usage of
+// $_GET, $_POST, etc... variables
+// completly safe in SQL queries
+function sql_safe($s)
+{
+	if (get_magic_quotes_gpc())
+		$s = stripslashes($s);
+
+	return mysql_real_escape_string($s);
+}
+
+// If user pressed submit in one of the forms
+if ($_SERVER['REQUEST_METHOD'] == 'POST')
+{
+	// DELETE POST
+	if (isset($_POST['del'])) // If used selected some photo to delete
+	{
+		if ($_POST['password'] != $password) // cheking passwors
+			$msg = 'Error: wrong password';
+		else
+		{
+			 // in 'uploaded images form';
+			$id = intval($_POST['del']);
+			$db->query("DELETE FROM {$table} WHERE id=$id");
+			$msg = 'Photo deleted';
+		}
+	
+	}
+	//- DELETE POST
+	
+
+//SHOW SINGLE SHOT
+} elseif (isset($_GET['show'])) {
+	
+	$id = intval($_GET['show']);
+	
+	$result = $db->query("SELECT ext, UNIX_TIMESTAMP(image_time), data
+	FROM {$table}
+	WHERE id=$id LIMIT 1");
+	
+	if ($result->getNumRows() == 0)
+		die('no image');
+	
+	list($ext, $image_time, $data) = $result->getRow();
+	
+	$send_304 = false;
+	if (php_sapi_name() == 'apache') {
+		// if our web server is apache
+		// we get check HTTP
+		// If-Modified-Since header
+		// and do not send image
+		// if there is a cached version
+		
+		$ar = apache_request_headers();
+		if (isset($ar['If-Modified-Since']) && // If-Modified-Since should exists
+		($ar['If-Modified-Since'] != '') && // not empty
+		(strtotime($ar['If-Modified-Since']) >= $image_time)) // and grater than
+		$send_304 = true; // image_time
+	}
+	
+	
+	if ($send_304)
+	{
+		// Sending 304 response to browser
+		// "Browser, your cached version of image is OK
+		// we're not sending anything new to you"
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s', $ts).' GMT', true, 304);
+		
+		exit(); // bye-bye
+	}
+	
+	// outputing Last-Modified header
+	header('Last-Modified: '.gmdate('D, d M Y H:i:s', $image_time).' GMT',
+	true, 200);
+	
+	// Set expiration time +1 year
+	// We do not have any photo re-uploading
+	// so, browser may cache this photo for quite a long time
+	header('Expires: '.gmdate('D, d M Y H:i:s', $image_time + 86400*365).' GMT',
+	true, 200);
+	
+	// outputing HTTP headers
+	header('Content-Length: '.strlen($data));
+	header("Content-type: image/{$ext}");
+	
+	// outputing image
+	echo $data;
+	exit();
+}
+//- SHOW SINGLE SHOT
+?>
+<html><head>
+<title>MT screens</title>
+</head>
+<body>
+
+<?php
+if (isset($msg)) // this is special section for
+// outputing message
+{
+?>
+<p style="font-weight: bold;"><?=$msg?>
+<br>
+<a href="<?=$PHP_SELF?>">reload page</a>
+</p>
+<?php
+}
+?>
+<h1>Mousetrap-rtcw player screenshots</h1>
+<h5>For more information, go to: <a href = "www.mousetrap-rtcw.tk">www.mousetrap-rtcw.tk</a></h5>
+<img src="http://home.deds.nl/~dutchmeat/mousetrap/rtcw_ico.gif">
+
+<TABLE width=600>
+<TR><TD>
+<FIELDSET>
+<LEGEND>Screenshots</LEGEND>
+
+<form action="<?=$PHP_SELF?>" method="post">
+<!-- This form is used for image deletion -->
+
+<?php
+// SHOW SCREENSHOT LINKS
+
+$result = $db->query("SELECT id, image_time, title, macAddr FROM {$table} ORDER BY id DESC");
+
+if(!$result)die($db->getError()); 
+
+if ($result->getNumRows() == 0) // table is empty
+echo '<ul><li>No images loaded</li></ul>';
+else
+{
+echo '<ul>';
+$prevdate = '';
+
+$screenshots = array();
+$i = 0;
+//$playerInfo = '';
+while(list($id, $image_time, $title, $macAddr) = $result->getRow())
+{
+	
+	list($date,$time) = split(" ", $image_time);
+	
+	$playerInfo = getPlayerInfoByMac($macAddr);
+//	var_dump($playerInfo);
+
+	if (isset($playerInfo)){
+		$names =  split("~", $playerInfo[1]);
+		$aliasses = implode(", ", $names);
+	}else
+		$aliasses = '';
+
+	$sString = <<<EOF
+		<li><input type='radio' name='del' value='{$id}'>
+		<a href='{$_SERVER["PHP_SELF"]}?show={$id}'>{$title}</a> &ndash; 
+		<small>{$image_time}</small> - Aliasses(if any): {$aliasses}</li>
+EOF;
+
+		if(isset($screenshots[$date]))
+			$screenshots[$date] .= $sString;
+		else
+			$screenshots[$date] = $sString;
+
+		
+}
+
+
+
+	ksort($screenshots);
+	$screenshots = array_reverse($screenshots);
+	
+	foreach ($screenshots As $key => $test){
+
+		if($key != $prevdate){
+			print "<B>Screenshots from date ".$key.":</B><BR>";	
+			print ($test);
+			print "<BR><BR>";
+		}
+	
+		$prevdate = $key;
+	}
+	
+
+	echo '</ul>';
+	
+	echo '<label for="password">Password for deleting screenshot:</label><br>';
+	echo '<input type="password" name="password" id="password"><br><br>';
+	
+	echo '<input type="submit" value="Delete selected">';
+}
+//- SHOW SCREENSHOT LINKS
+?>
+</FIELDSET>
+</TD></TR>
+</TABLE>
+</body>
+</html>

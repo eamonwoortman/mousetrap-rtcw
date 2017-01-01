@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="engine">
+      <UniqueIdentifier>{138b4309-b9a2-4d56-9c48-7fb71b58fc0f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="findInjectors.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GetMacGuid.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="hooked_functions.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="processapi.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="proxydll.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RSA_MD5.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="shared.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TH32.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="proxydll.def">
+      <Filter>Sources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="d3d8.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="detours.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Hook.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="processapi.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="proxydll.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RSA_MD5.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="shared.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TH32.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="xorstr.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bg_public.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\cg_local.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\cg_public.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\keycodes.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\menudef.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\q_shared.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\surfaceflags.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\tr_types.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
